@@ -20,59 +20,46 @@ import {LyricLine} from './models/lyric.model';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App implements AfterViewInit {
+  // --- Constants ---
+  // The max pixel width before we force a line wrap
+  readonly MAX_CARD_WIDTH = 600;
+
   // --- State Signals ---
   videoUrl: WritableSignal<SafeUrl | null> = signal(null);
   lyrics: WritableSignal<LyricLine[]> = signal([]);
   jsonFileName: WritableSignal<string | null> = signal(null);
 
-  // Playback State
   currentTime: WritableSignal<number> = signal(0);
 
-  // --- Computed State ---
-  // Ready only when BOTH video and lyrics are present
   isReady = computed(() => !!this.videoUrl() && this.lyrics().length > 0);
 
-  // Efficiently derive the current line
   currentLine = computed(() => {
     const time = this.currentTime();
     const lines = this.lyrics();
-
-    // Reverse loop to find the most recent active line
     for (let i = lines.length - 1; i >= 0; i--) {
-      if (lines[i].time <= time) {
-        return lines[i].text;
-      }
+      if (lines[i].time <= time) return lines[i].text;
     }
     return "♪";
   });
 
-  // Calculate width dynamically
+  // Calculate width, but CAP it at MAX_CARD_WIDTH
   cardWidth = computed(() => {
     return this.measureTextWidth(this.currentLine());
   });
 
-  // --- DOM References ---
-  // We need this to trigger .play() manually
   @ViewChild('videoRef') videoElement!: ElementRef<HTMLVideoElement>;
 
   private canvas: HTMLCanvasElement = document.createElement('canvas');
   private ctx: CanvasRenderingContext2D | null = this.canvas.getContext('2d');
 
   constructor(private sanitizer: DomSanitizer) {
-    // --- The Auto-Play Magic ---
-    // effect() automatically runs whenever signals inside it change.
     effect(() => {
       if (this.isReady()) {
-        // We are ready! Reset time to 0 to be safe.
         if (this.videoElement?.nativeElement) {
           this.videoElement.nativeElement.currentTime = 0;
         }
-
-        // Hold for 1 second (1000ms), then play
         setTimeout(() => {
-          this.videoElement?.nativeElement.play().catch(err => {
-            console.warn("Autoplay blocked:", err);
-          });
+          this.videoElement?.nativeElement.play().catch(e => console.warn(e));
         }, 1000);
       }
     });
@@ -82,8 +69,8 @@ export class App implements AfterViewInit {
     this.measureTextWidth(this.currentLine());
   }
 
-  // 1. Handle Video
-  onVideoSelected(event: Event): void {
+  /* ... Keep onVideoSelected, onLyricsSelected, onTimeUpdate the same ... */
+  onVideoSelected(event: Event): void { /* ... paste existing logic ... */
     const input = event.target as HTMLInputElement;
     if (input.files?.[0]) {
       const file = input.files[0];
@@ -92,8 +79,7 @@ export class App implements AfterViewInit {
     }
   }
 
-  // 2. Handle Lyrics
-  onLyricsSelected(event: Event): void {
+  onLyricsSelected(event: Event): void { /* ... paste existing logic ... */
     const input = event.target as HTMLInputElement;
     if (input.files?.[0]) {
       const file = input.files[0];
@@ -114,7 +100,6 @@ export class App implements AfterViewInit {
     }
   }
 
-  // 3. Sync Engine
   onTimeUpdate(event: Event): void {
     const video = event.target as HTMLVideoElement;
     this.currentTime.set(video.currentTime);
@@ -122,8 +107,21 @@ export class App implements AfterViewInit {
 
   private measureTextWidth(text: string): number {
     if (!this.ctx) return 600;
+
+    // Match CSS Font exactly
     this.ctx.font = "600 40px Inter, sans-serif";
     const metrics = this.ctx.measureText(text);
-    return Math.ceil(metrics.width + 160 + 20);
+
+    // Padding Calculation (matches CSS padding: 3rem 4rem)
+    // 4rem left + 4rem right = 8rem. 8 * 16px = 128px.
+    const padding = 128;
+    const buffer = 20;
+
+    const calculatedWidth = Math.ceil(metrics.width + padding + buffer);
+
+    // KEY LOGIC: Return the smaller of the two values.
+    // If text is short, it returns calculatedWidth (snug fit).
+    // If text is long, it returns MAX_CARD_WIDTH (forcing CSS wrap).
+    return Math.min(calculatedWidth, this.MAX_CARD_WIDTH);
   }
 }
