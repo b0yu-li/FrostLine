@@ -71,9 +71,8 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
      Crucial for the JS width calculation.
      5rem Left + 5rem Right = 10rem.
      At 16px root font, 10rem = 160px.
-     This matches the 'padding = 160' in your TS.
   */
-  padding: 3rem 5rem;
+  padding: 1rem 1rem;
 
   /* ANIMATION */
   /* This animates the [style.width.px] updates from Angular */

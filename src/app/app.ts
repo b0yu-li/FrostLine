@@ -124,6 +124,6 @@ export class App implements AfterViewInit {
     if (!this.ctx) return 600;
     this.ctx.font = "600 40px Inter, sans-serif";
     const metrics = this.ctx.measureText(text);
-    return Math.ceil(metrics.width + 160 + 20);
+    return Math.ceil(metrics.width + 32 + 20);
   }
 }
