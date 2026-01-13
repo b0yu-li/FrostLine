@@ -1,131 +1,181 @@
-/* 1. Reset defaults for full screen */
+/* =========================================
+   1. Variables & Theme
+   ========================================= */
+$font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+$color-bg-dark: #0a0a0a;
+$color-text: #ffffff;
+$color-accent: #64b5f6; /* Soft blue for focus states */
+
+/* Glass Settings */
+$glass-bg: rgba(255, 255, 255, 0.1);
+$glass-border: rgba(255, 255, 255, 0.2);
+$glass-blur: 20px;
+$glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+/* =========================================
+   2. Global Reset & Host
+   ========================================= */
 :host {
   display: block;
   height: 100vh;
   width: 100vw;
-  overflow: hidden; /* Prevent scrollbars */
+  overflow: hidden;
+  background-color: $color-bg-dark;
+  font-family: $font-stack;
+  color: $color-text;
 }
 
-/* 2. Position video as fixed background */
+/* =========================================
+   3. The Stage (Video & Overlay)
+   ========================================= */
 .video-bg {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensures video covers screen without stretching */
-  z-index: -1; /* Pushes video behind everything */
+  object-fit: cover;
+  z-index: 0; /* Base layer */
 }
 
-/* 3. Center the lyrics on screen */
 .overlay-container {
+  position: relative;
   height: 100%;
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center; /* Center vertically and horizontally */
-}
-
-/* 4. The Frosted Glass Effect */
-.glass-card {
-  /* Semi-transparent white background */
-  background: rgba(255, 255, 255, 0.15);
-
-  /* The Blur Magic */
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px); /* Safari support */
-
-  /* Border and Shadow for depth */
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-
-  /* Spacing and Rounding */
-  padding: 2rem 4rem;
-  border-radius: 16px;
-  text-align: center;
-  max-width: 80%;
-}
-
-.lyrics-text {
-  font-family: 'Helvetica Neue', sans-serif;
-  font-size: 2rem;
-  font-weight: 300;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Shadow makes text readable on bright videos */
-  margin: 0;
-}
-
-/* ... keep your existing :host, .video-bg, .overlay-container, etc ... */
-
-/* New styles for the upload screen */
-.upload-container {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  background-color: #1a1a1a; /* Dark background before video loads */
+  z-index: 1; /* Above video */
 }
 
-.upload-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  padding: 1rem 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: sans-serif;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
+/* =========================================
+   4. Component: The Glass Card (Lyrics)
+   ========================================= */
+.glass-card {
+  background: $glass-bg;
+  backdrop-filter: blur($glass-blur);
+  -webkit-backdrop-filter: blur($glass-blur);
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+  border: 1px solid $glass-border;
+  border-radius: 24px;
+  box-shadow: $glass-shadow;
+
+  padding: 3rem 5rem;
+  max-width: 85%;
+  text-align: center;
+
+  /* Smooth scaling/fading if you add animations later */
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  .lyrics-text {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: $color-text;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    letter-spacing: -0.02em;
   }
 }
 
-/* ... Keep .video-bg, .overlay-container, .glass-card, .lyrics-text ... */
-
+/* =========================================
+   5. Scene: Setup / Upload (The Dashboard)
+   ========================================= */
 .setup-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #111;
+  z-index: 10; /* Topmost layer */
+
+  background: rgba(0, 0, 0, 0.85); /* Darker backdrop for focus */
+  backdrop-filter: blur(10px); /* Blur the video behind setup */
+
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10; /* Ensure it sits on top */
 }
 
 .setup-card {
-  background: #222;
-  color: white;
-  padding: 2rem;
-  border-radius: 12px;
-  width: 350px;
-  border: 1px solid #444;
+  background: #18181b; /* Neutral dark grey */
+  padding: 2.5rem;
+  border-radius: 16px;
+  border: 1px solid #333;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
 
   h2 {
     margin-top: 0;
+    margin-bottom: 2rem;
     text-align: center;
-  }
-}
-
-.input-group {
-  margin-bottom: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-
-  label {
-    font-weight: bold;
-    color: #ccc;
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; /* Gradient text effect */
   }
 
-  input[type="file"] {
-    font-size: 0.9rem;
-    color: #888;
+  .input-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    &:last-of-type {
+      margin-bottom: 0.5rem;
+    }
+
+    label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #888;
+      font-weight: 600;
+    }
+
+    /* Customizing the File Input */
+    input[type="file"] {
+      background: #27272a;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px dashed #52525b;
+      color: #d4d4d8;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #3f3f46;
+        border-color: #a1a1aa;
+        color: #fff;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $color-accent;
+        box-shadow: 0 0 0 2px rgba($color-accent, 0.2);
+      }
+
+      /* Native file button styling override */
+      &::file-selector-button {
+        background: #52525b;
+        color: white;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 4px;
+        margin-right: 12px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+    }
+
+    small {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.8rem;
+      color: $color-accent;
+    }
   }
 }
