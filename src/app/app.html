@@ -1,9 +1,9 @@
 @if (videoUrl()) {
   <video
+    #videoRef
     [src]="videoUrl()"
     (timeupdate)="onTimeUpdate($event)"
     controls
-    autoplay
     class="video-bg">
   </video>
 }
