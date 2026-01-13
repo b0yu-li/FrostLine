@@ -1,4 +1,4 @@
-import {Component, signal} from '@angular/core';
+import {AfterViewInit, Component, signal} from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {NgIf} from '@angular/common';
 import {LyricLine} from './models/lyric.model';
@@ -9,19 +9,29 @@ import {LyricLine} from './models/lyric.model';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements AfterViewInit {
   protected readonly title = signal('FrostLine');
 
   videoUrl: SafeUrl | null = null;
 
   lyrics: LyricLine[] = [];
   currentLine: string = "♪ Select a video and lyrics to start ♪";
+  cardWidth: number = 600; // Starting width in px
+
+  // The "Ruler"
+  private canvas: HTMLCanvasElement = document.createElement('canvas');
+  private ctx: CanvasRenderingContext2D | null = this.canvas.getContext('2d');
 
   // Setup State
   jsonFileName: string | null = null; // To show selected filename
   isReady: boolean = false;
 
   constructor(private sanitizer: DomSanitizer) {
+  }
+
+  ngAfterViewInit() {
+    // Optional: Set initial width for the placeholder text
+    this.calculateWidth(this.currentLine);
   }
 
   // 1. Handle Video File
@@ -79,11 +89,32 @@ export class App {
       .filter(l => l.time <= currentTime) // Get all past lines
       .pop(); // Take the last one (most recent)
 
-    if (activeLyric) {
-      this.currentLine = activeLyric.text;
-    } else {
-      // Before the first lyric starts
-      this.currentLine = "♪";
+    const nextText = activeLyric ? activeLyric.text : "♪";
+
+    // 2. ONLY update if the text is different (prevents jitter)
+    if (nextText !== this.currentLine) {
+      this.currentLine = nextText;
+      this.calculateWidth(nextText);
     }
+  }
+
+  calculateWidth(text: string) {
+    if (!this.ctx) return;
+
+    // A. Match CSS EXACTLY: font-weight, font-size, font-family
+    // Note: 2.5rem = 40px (assuming default root font size)
+    this.ctx.font = "600 40px Inter, sans-serif";
+
+    // B. Measure the text
+    const metrics = this.ctx.measureText(text);
+
+    // C. Add Padding (from SCSS: padding is 3rem 5rem)
+    // 5rem left + 5rem right = 10rem. 10rem * 16px = 160px.
+    const padding = 160;
+
+    // D. Add a little buffer for "breathing room"
+    const buffer = 20;
+
+    this.cardWidth = Math.ceil(metrics.width + padding + buffer);
   }
 }

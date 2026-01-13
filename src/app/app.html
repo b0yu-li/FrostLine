@@ -24,7 +24,7 @@
 </div>
 
 <div class="overlay-container" *ngIf="isReady">
-  <div class="glass-card">
+  <div class="glass-card" [style.width.px]="cardWidth">
     <p class="lyrics-text">
       {{ currentLine }}
     </p>
