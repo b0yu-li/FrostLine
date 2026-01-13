@@ -1,17 +1,32 @@
-<div class="upload-container" *ngIf="!videoUrl">
-  <label class="upload-btn">
-    <input type="file" accept="video/*" (change)="onVideoSelected($event)" hidden>
-    📁 Choose Background Video
-  </label>
+<video
+  *ngIf="videoUrl"
+  [src]="videoUrl"
+  (timeupdate)="onTimeUpdate($event)"
+  controls
+  autoplay
+  class="video-bg">
+</video>
+<div class="setup-container" *ngIf="!isReady">
+  <div class="setup-card">
+    <h2>🚀 Setup FrostLine</h2>
+
+    <div class="input-group">
+      <label>1. Select Video Background</label>
+      <input type="file" accept="video/*" (change)="onVideoSelected($event)">
+    </div>
+
+    <div class="input-group">
+      <label>2. Select Lyrics JSON</label>
+      <input type="file" accept=".json" (change)="onLyricsSelected($event)">
+      <small *ngIf="jsonFileName">Loaded: {{ jsonFileName }}</small>
+    </div>
+  </div>
 </div>
 
-<video *ngIf="videoUrl" [src]="videoUrl" autoplay muted loop playsinline class="video-bg"></video>
-
-<div class="overlay-container" *ngIf="videoUrl">
+<div class="overlay-container" *ngIf="isReady">
   <div class="glass-card">
     <p class="lyrics-text">
-      🎶 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-      magna aliqua. 🎶
+      {{ currentLine }}
     </p>
   </div>
 </div>

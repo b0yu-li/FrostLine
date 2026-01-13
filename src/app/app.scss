@@ -83,3 +83,49 @@
     transform: translateY(-2px);
   }
 }
+
+/* ... Keep .video-bg, .overlay-container, .glass-card, .lyrics-text ... */
+
+.setup-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #111;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10; /* Ensure it sits on top */
+}
+
+.setup-card {
+  background: #222;
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 350px;
+  border: 1px solid #444;
+
+  h2 {
+    margin-top: 0;
+    text-align: center;
+  }
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: bold;
+    color: #ccc;
+  }
+
+  input[type="file"] {
+    font-size: 0.9rem;
+    color: #888;
+  }
+}
