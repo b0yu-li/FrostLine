@@ -1,0 +1,56 @@
+/* 1. Reset defaults for full screen */
+:host {
+  display: block;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden; /* Prevent scrollbars */
+}
+
+/* 2. Position video as fixed background */
+.video-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures video covers screen without stretching */
+  z-index: -1; /* Pushes video behind everything */
+}
+
+/* 3. Center the lyrics on screen */
+.overlay-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Center vertically and horizontally */
+}
+
+/* 4. The Frosted Glass Effect */
+.glass-card {
+  /* Semi-transparent white background */
+  background: rgba(255, 255, 255, 0.15);
+
+  /* The Blur Magic */
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px); /* Safari support */
+
+  /* Border and Shadow for depth */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+
+  /* Spacing and Rounding */
+  padding: 2rem 4rem;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 80%;
+}
+
+.lyrics-text {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 2rem;
+  font-weight: 300;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Shadow makes text readable on bright videos */
+  margin: 0;
+}
