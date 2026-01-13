@@ -1,32 +1,40 @@
-<video
-  *ngIf="videoUrl"
-  [src]="videoUrl"
-  (timeupdate)="onTimeUpdate($event)"
-  controls
-  autoplay
-  class="video-bg">
-</video>
-<div class="setup-container" *ngIf="!isReady">
-  <div class="setup-card">
-    <h2>🚀 Setup FrostLine</h2>
+@if (videoUrl()) {
+  <video
+    [src]="videoUrl()"
+    (timeupdate)="onTimeUpdate($event)"
+    controls
+    autoplay
+    class="video-bg">
+  </video>
+}
 
-    <div class="input-group">
-      <label>1. Select Video Background</label>
-      <input type="file" accept="video/*" (change)="onVideoSelected($event)">
-    </div>
+@if (!isReady()) {
+  <div class="setup-container">
+    <div class="setup-card">
+      <h2>🚀 Setup FrostLine</h2>
 
-    <div class="input-group">
-      <label>2. Select Lyrics JSON</label>
-      <input type="file" accept=".json" (change)="onLyricsSelected($event)">
-      <small *ngIf="jsonFileName">Loaded: {{ jsonFileName }}</small>
+      <div class="input-group">
+        <label>1. Select Video Background</label>
+        <input type="file" accept="video/*" (change)="onVideoSelected($event)">
+      </div>
+
+      <div class="input-group">
+        <label>2. Select Lyrics JSON</label>
+        <input type="file" accept=".json" (change)="onLyricsSelected($event)">
+        @if (jsonFileName()) {
+          <small>Loaded: {{ jsonFileName() }}</small>
+        }
+      </div>
     </div>
   </div>
-</div>
+}
 
-<div class="overlay-container" *ngIf="isReady">
-  <div class="glass-card" [style.width.px]="cardWidth">
-    <p class="lyrics-text">
-      {{ currentLine }}
-    </p>
+@if (isReady()) {
+  <div class="overlay-container">
+    <div class="glass-card" [style.width.px]="cardWidth()">
+      <p class="lyrics-text">
+        {{ currentLine() }}
+      </p>
+    </div>
   </div>
-</div>
+}
