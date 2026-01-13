@@ -54,3 +54,32 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Shadow makes text readable on bright videos */
   margin: 0;
 }
+
+/* ... keep your existing :host, .video-bg, .overlay-container, etc ... */
+
+/* New styles for the upload screen */
+.upload-container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1a1a1a; /* Dark background before video loads */
+}
+
+.upload-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 1rem 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: sans-serif;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+}
