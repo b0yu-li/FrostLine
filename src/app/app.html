@@ -32,9 +32,13 @@
 @if (isReady()) {
   <div class="overlay-container">
     <div class="glass-card" [style.width.px]="cardWidth()">
-      <p class="lyrics-text">
-        {{ currentLine() }}
-      </p>
+
+      @for (line of [currentLine()]; track line) {
+        <p class="lyrics-text" [@lyricChange]>
+          {{ line }}
+        </p>
+      }
+
     </div>
   </div>
 }
