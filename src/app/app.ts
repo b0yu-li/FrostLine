@@ -129,7 +129,13 @@ export class App implements AfterViewInit {
 
   private measureTextWidth(text: string): number {
     if (!this.ctx) return 600;
-    this.ctx.font = "600 40px Inter, sans-serif";
+    // --- UPDATED FONT DEFINITION TO MATCH SCSS ---
+    // font-style: oblique
+    // font-weight: 700 (Bold)
+    // font-size: 40px
+    // font-family: Helvetica, ...
+    this.ctx.font = "oblique 700 40px Helvetica, Inter, sans-serif";
+
     const metrics = this.ctx.measureText(text);
     return Math.ceil(metrics.width + this.PADDING_PX + this.BUFFER_PX);
   }

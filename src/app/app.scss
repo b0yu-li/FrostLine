@@ -1,7 +1,8 @@
 /* =========================================
    1. Variables & Theme
    ========================================= */
-$font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+/* Added Helvetica to the stack as priority */
+$font-stack: 'Helvetica', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 $color-bg-dark: #0a0a0a;
 $color-text: #ffffff;
 $color-accent: #64b5f6;
@@ -61,15 +62,13 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 
   /* LAYOUT FIX: */
   display: grid;
-  /* 1. minmax(0, 1fr) allows the track to shrink smaller than the text content. */
-  /* 2. This ensures the "center" remains the geometric center of the card. */
   grid-template-columns: minmax(0, 1fr);
   place-items: center;
 
   overflow: hidden;
-  padding: 1rem 1rem;
+  padding: 1.5rem 1rem 1rem 1rem;
 
-  /* Transition: matches your TS animation speed for sync */
+  /* Transition */
   transition: width 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
 
   max-width: 95vw;
@@ -79,17 +78,19 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     grid-area: 1 / 1;
 
     margin: 0;
-    font-size: 2.5rem;
-    font-weight: 600;
+
+    /* --- FONT UPDATE --- */
+    font-size: 2.5rem; /* 40px */
+    font-weight: 700; /* Changed to Bold (was 600) */
+    font-style: oblique; /* Added Oblique (Italic) */
     line-height: 1.4;
+
     color: $color-text;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     letter-spacing: -0.02em;
 
-    /* Ensure text centers within the element */
     width: 100%;
     text-align: center;
-
     white-space: nowrap;
   }
 }
