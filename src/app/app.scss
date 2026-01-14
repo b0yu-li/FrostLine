@@ -76,7 +76,7 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 
   /* ANIMATION */
   /* This animates the [style.width.px] updates from Angular */
-  transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: width 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
 
   /* Note: max-width is removed or set high so the card can grow freely
      based on the text length calculation */
