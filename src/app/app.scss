@@ -13,7 +13,7 @@ $glass-border: rgba(255, 255, 255, 0.18);
 $glass-blur: 20px;
 /* Added brightness() to darken the background video slightly for contrast */
 $glass-filter: blur($glass-blur) brightness(0.85);
-$glass-shadow: 0 8px 32px rgba(255, 255, 255, 0.3);
+$glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 
 /* =========================================
    2. Global Reset & Host
@@ -89,14 +89,9 @@ $glass-shadow: 0 8px 32px rgba(255, 255, 255, 0.3);
     font-style: oblique; /* Italic/Oblique */
     line-height: 1.4;
 
-    color: $color-text;
+    // color: $color-text;
+    color: rgba(159, 51, 47);
     letter-spacing: -0.02em;
-
-    /* --- THE "POP" FACTOR --- */
-    /* Layer 1: Tight, dark shadow for definition */
-    /* Layer 2: Soft, broad shadow for 3D lift */
-    text-shadow: 0 2px 4px rgba(255, 0, 0, 0.8),
-    0 8px 20px rgba(255, 255, 255, 0.5);
 
     /* Text Alignment */
     width: 100%;
