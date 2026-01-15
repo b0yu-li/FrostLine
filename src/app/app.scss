@@ -1,16 +1,19 @@
 /* =========================================
    1. Variables & Theme
    ========================================= */
-/* Added Helvetica to the stack as priority */
+/* Helvetica is priority, falling back to Inter/System */
 $font-stack: 'Helvetica', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 $color-bg-dark: #0a0a0a;
 $color-text: #ffffff;
 $color-accent: #64b5f6;
 
-$glass-bg: rgba(255, 255, 255, 0.1);
-$glass-border: rgba(255, 255, 255, 0.2);
+/* Glass Settings */
+$glass-bg: rgb(255, 255, 255, 0.03); /* Reduced opacity for cleaner look */
+$glass-border: rgba(255, 255, 255, 0.18);
 $glass-blur: 20px;
-$glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+/* Added brightness() to darken the background video slightly for contrast */
+$glass-filter: blur($glass-blur) brightness(0.85);
+$glass-shadow: 0 8px 32px rgba(255, 255, 255, 0.3);
 
 /* =========================================
    2. Global Reset & Host
@@ -54,21 +57,23 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 .glass-card {
   /* Visuals */
   background: $glass-bg;
-  backdrop-filter: blur($glass-blur);
-  -webkit-backdrop-filter: blur($glass-blur);
+  backdrop-filter: $glass-filter;
+  -webkit-backdrop-filter: $glass-filter;
+
   border: 1px solid $glass-border;
   border-radius: 24px;
   box-shadow: $glass-shadow;
 
-  /* LAYOUT FIX: */
+  /* Layout */
   display: grid;
+  /* minmax(0, 1fr) prevents grid blowout if text is wider than container */
   grid-template-columns: minmax(0, 1fr);
   place-items: center;
 
   overflow: hidden;
   padding: 1.5rem 1rem 1rem 1rem;
 
-  /* Transition */
+  /* Smooth Transition for both dimensions */
   transition: width 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
 
   max-width: 95vw;
@@ -76,22 +81,30 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   .lyrics-text {
     /* Stack elements in the single grid cell */
     grid-area: 1 / 1;
-
     margin: 0;
 
-    /* --- FONT UPDATE --- */
+    /* Typography: Helvetica Bold Oblique */
     font-size: 2.5rem; /* 40px */
-    font-weight: 700; /* Changed to Bold (was 600) */
-    font-style: oblique; /* Added Oblique (Italic) */
+    font-weight: 700; /* Bold */
+    font-style: oblique; /* Italic/Oblique */
     line-height: 1.4;
 
     color: $color-text;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     letter-spacing: -0.02em;
 
+    /* --- THE "POP" FACTOR --- */
+    /* Layer 1: Tight, dark shadow for definition */
+    /* Layer 2: Soft, broad shadow for 3D lift */
+    text-shadow: 0 2px 4px rgba(255, 0, 0, 0.8),
+    0 8px 20px rgba(255, 255, 255, 0.5);
+
+    /* Text Alignment */
     width: 100%;
     text-align: center;
     white-space: nowrap;
+
+    /* Hardware acceleration for sharper text rendering */
+    transform: translateZ(0);
   }
 }
 
@@ -172,7 +185,7 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       display: block;
       margin-top: 0.25rem;
       font-size: 0.8rem;
-      color: #64b5f6;
+      color: $color-accent;
     }
   }
 }
