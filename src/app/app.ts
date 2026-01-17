@@ -34,7 +34,7 @@ import { LyricLine } from './models/lyric.model';
   ]
 })
 export class App implements AfterViewInit {
-  readonly PADDING_PX = 32;
+  readonly PADDING_PX = 22;
   readonly BUFFER_PX = 20;
 
   // --- State Signals ---
@@ -143,7 +143,7 @@ export class App implements AfterViewInit {
 
   private measureTextWidth(text: string): number {
     if (!this.ctx) return 600;
-    this.ctx.font = "oblique 700 40px Helvetica, Inter, sans-serif";
+    this.ctx.font = "oblique 700 36px Helvetica, Inter, sans-serif";
     const metrics = this.ctx.measureText(text);
     return Math.ceil(metrics.width + this.PADDING_PX + this.BUFFER_PX);
   }
