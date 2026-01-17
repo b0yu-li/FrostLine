@@ -1,44 +1,89 @@
-@if (videoUrl()) {
-  <video
-    #videoRef
-    [src]="videoUrl()"
-    (timeupdate)="onTimeUpdate($event)"
-    controls
-    class="video-bg">
-  </video>
-}
+<div class="studio-layout">
 
-@if (!isReady()) {
-  <div class="setup-container">
-    <div class="setup-card">
-      <h2>🚀 Setup FrostLine</h2>
+  <!-- ===============================
+       ZONE 1: THE STAGE (Renderer)
+       =============================== -->
+  <main class="stage-area">
+    @if (videoUrl()) {
+      <video
+        #videoRef
+        [src]="videoUrl()"
+        (timeupdate)="onTimeUpdate($event)"
+        (loadedmetadata)="onMetadataLoaded($event)"
+        (ended)="isPlaying.set(false)"
+        class="video-bg">
+      </video>
+    }
 
-      <div class="input-group">
-        <label>1. Select Video Background</label>
+    <!-- Setup Prompt (Only visible if not ready) -->
+    @if (!isReady()) {
+      <div class="setup-prompt">
+        <h2>FrostLine Studio</h2>
+        <p>Please load your assets below to begin.</p>
+      </div>
+    }
+
+    <!-- The Lyrics Overlay -->
+    @if (isReady()) {
+      <div class="overlay-container">
+        <div class="glass-card" [style.width.px]="cardWidth()">
+          @for (line of [currentLine()]; track line) {
+            <p class="lyrics-text" [@lyricChange]>
+              {{ line }}
+            </p>
+          }
+        </div>
+      </div>
+    }
+  </main>
+
+  <!-- ===============================
+       ZONE 2: THE CONSOLE (Controls)
+       =============================== -->
+  <footer class="control-deck">
+
+    <!-- A. Playback Controls -->
+    <div class="playback-group">
+      <button class="play-btn" (click)="togglePlay()" [disabled]="!videoUrl()">
+        {{ isPlaying() ? '⏸' : '▶' }}
+      </button>
+
+      <div class="scrubber-container">
+        <span class="time-label">{{ formatTime(currentTime()) }}</span>
+        <input
+          type="range"
+          [min]="0"
+          [max]="duration()"
+          [value]="currentTime()"
+          (input)="seek($event)"
+          [disabled]="!videoUrl()"
+          class="scrubber"
+        >
+        <span class="time-label">{{ formatTime(duration()) }}</span>
+      </div>
+    </div>
+
+    <!-- B. Asset Management -->
+    <div class="assets-group">
+      <div class="file-input-wrapper">
+        <label>Video</label>
         <input type="file" accept="video/*" (change)="onVideoSelected($event)">
       </div>
 
-      <div class="input-group">
-        <label>2. Select Lyrics JSON</label>
+      <div class="file-input-wrapper">
+        <label>Lyrics</label>
         <input type="file" accept=".json" (change)="onLyricsSelected($event)">
+      </div>
+
+      <div class="status-indicator">
         @if (jsonFileName()) {
-          <small>Loaded: {{ jsonFileName() }}</small>
+          <span class="badge success">JSON: {{ jsonFileName() }}</span>
+        } @else {
+          <span class="badge">No Lyrics</span>
         }
       </div>
     </div>
-  </div>
-}
 
-@if (isReady()) {
-  <div class="overlay-container">
-    <div class="glass-card" [style.width.px]="cardWidth()">
+  </footer>
 
-      @for (line of [currentLine()]; track line) {
-        <p class="lyrics-text" [@lyricChange]>
-          {{ line }}
-        </p>
-      }
-
-    </div>
-  </div>
-}
+</div>

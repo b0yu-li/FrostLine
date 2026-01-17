@@ -1,22 +1,21 @@
 /* =========================================
    1. Variables & Theme
    ========================================= */
-/* Helvetica is priority, falling back to Inter/System */
 $font-stack: 'Helvetica', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 $color-bg-dark: #0a0a0a;
-$color-text: #ffffff;
+$color-panel: #111111;
+$color-text: rgba(159, 51, 47);
 $color-accent: #64b5f6;
 
 /* Glass Settings */
-$glass-bg: rgb(255, 255, 255, 0.03); /* Reduced opacity for cleaner look */
+$glass-bg: rgba(255, 255, 255, 0.03);
 $glass-border: rgba(255, 255, 255, 0.18);
 $glass-blur: 20px;
-/* Added brightness() to darken the background video slightly for contrast */
 $glass-filter: blur($glass-blur) brightness(0.85);
 $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 
 /* =========================================
-   2. Global Reset & Host
+   2. Main Layout (Studio Mode)
    ========================================= */
 :host {
   display: block;
@@ -28,159 +27,218 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   color: $color-text;
 }
 
-/* =========================================
-   3. The Stage
-   ========================================= */
+.studio-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+/* --- ZONE 1: THE STAGE (Renderer) --- */
+.stage-area {
+  position: relative;
+  flex: 1; /* Takes up all remaining space */
+  width: 100%;
+  overflow: hidden;
+  background: black; /* Letterboxing color */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .video-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: contain; /* Keeps aspect ratio */
   z-index: 0;
 }
 
+.setup-prompt {
+  position: absolute;
+  z-index: 2;
+  text-align: center;
+  color: #666;
+
+  h2 {
+    margin-bottom: 0.5rem;
+    color: #fff;
+  }
+}
+
+/* Reuse existing overlay logic */
 .overlay-container {
-  position: relative;
+  position: absolute; /* Changed to absolute to fit inside stage */
+  top: 0;
+  left: 0;
   height: 100%;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1;
+  pointer-events: none; /* Allows clicking through to video if needed, though controls are below now */
 }
 
 /* =========================================
-   4. The Glass Card
+   3. The Glass Card
    ========================================= */
 .glass-card {
-  /* Visuals */
   background: $glass-bg;
   backdrop-filter: $glass-filter;
   -webkit-backdrop-filter: $glass-filter;
-
   border: 1px solid $glass-border;
   border-radius: 24px;
   box-shadow: $glass-shadow;
 
-  /* Layout */
   display: grid;
-  /* minmax(0, 1fr) prevents grid blowout if text is wider than container */
   grid-template-columns: minmax(0, 1fr);
   place-items: center;
 
   overflow: hidden;
   padding: 1.5rem 1rem 1rem 1rem;
-
-  /* Smooth Transition for both dimensions */
   transition: width 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
-
   max-width: 95vw;
+  pointer-events: auto; /* Re-enable clicks on the card itself if needed */
 
   .lyrics-text {
-    /* Stack elements in the single grid cell */
     grid-area: 1 / 1;
     margin: 0;
-
-    /* Typography: Helvetica Bold Oblique */
-    font-size: 2.5rem; /* 40px */
-    font-weight: 700; /* Bold */
-    font-style: oblique; /* Italic/Oblique */
+    font-size: 2.5rem;
+    font-weight: 700;
+    font-style: oblique;
     line-height: 1.4;
-
-    // color: $color-text;
-    color: rgba(159, 51, 47);
+    color: $color-text;
     letter-spacing: -0.02em;
-
-    /* Text Alignment */
+    text-shadow: 0 3px 3px rgba(255, 255, 255, 0.6), 0 6px 18px rgba(0, 0, 0, 0.3);
     width: 100%;
     text-align: center;
     white-space: nowrap;
-
-    /* Hardware acceleration for sharper text rendering */
     transform: translateZ(0);
   }
 }
 
 /* =========================================
-   5. Setup UI
+   4. ZONE 2: THE CONSOLE (Control Deck)
    ========================================= */
-.setup-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 10;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
+.control-deck {
+  height: 120px; /* Fixed height for controls */
+  background: $color-panel;
+  border-top: 1px solid #333;
+  padding: 0 2rem;
+
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  z-index: 10;
 }
 
-.setup-card {
-  background: #18181b;
-  padding: 2.5rem;
-  border-radius: 16px;
-  border: 1px solid #333;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+/* Playback Group (Left) */
+.playback-group {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+}
 
-  h2 {
-    margin-top: 0;
-    margin-bottom: 2rem;
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 700;
-    background: linear-gradient(90deg, #fff, #aaa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.play-btn {
+  background: $color-accent;
+  color: #000;
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.1);
   }
 
-  .input-group {
-    margin-bottom: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  &:disabled {
+    background: #333;
+    color: #555;
+    cursor: not-allowed;
+  }
+}
 
-    &:last-of-type {
-      margin-bottom: 0.5rem;
-    }
+.scrubber-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
 
-    label {
-      font-size: 0.85rem;
-      color: #888;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
+  .time-label {
+    font-variant-numeric: tabular-nums;
+    color: #888;
+    font-size: 0.9rem;
+    min-width: 40px;
+  }
 
-    input[type="file"] {
-      background: #27272a;
-      padding: 0.75rem;
-      border-radius: 8px;
-      border: 1px dashed #52525b;
-      color: #d4d4d8;
+  .scrubber {
+    flex: 1;
+    cursor: pointer;
+    accent-color: $color-accent;
+  }
+}
+
+/* Assets Group (Right) */
+.assets-group {
+  display: flex;
+  gap: 1.5rem;
+  border-left: 1px solid #333;
+  padding-left: 1.5rem;
+}
+
+.file-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #666;
+    font-weight: 700;
+  }
+
+  input[type="file"] {
+    font-size: 0.8rem;
+    color: #aaa;
+    max-width: 200px;
+
+    &::file-selector-button {
+      background: #333;
+      color: #ddd;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin-right: 8px;
       cursor: pointer;
-
-      &::file-selector-button {
-        background: #52525b;
-        color: white;
-        border: none;
-        padding: 4px 10px;
-        border-radius: 4px;
-        margin-right: 12px;
-        cursor: pointer;
-      }
-    }
-
-    small {
-      display: block;
-      margin-top: 0.25rem;
       font-size: 0.8rem;
+    }
+  }
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+
+  .badge {
+    background: #333;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #888;
+
+    &.success {
       color: $color-accent;
+      background: rgba($color-accent, 0.1);
     }
   }
 }
