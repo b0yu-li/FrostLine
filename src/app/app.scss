@@ -4,7 +4,10 @@
 $font-stack: 'Helvetica', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 $color-bg-dark: #0a0a0a;
 $color-panel: #111111;
-$color-text: rgba(159, 51, 47);
+
+/* Your Design Colors */
+/* Normalized to rgb() for better browser compatibility */
+$color-text: rgb(159, 51, 47);
 $color-accent: #64b5f6;
 
 /* Glass Settings */
@@ -18,6 +21,11 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
    2. Main Layout (Studio Mode)
    ========================================= */
 :host {
+  /* GAP FIX: Switch to fixed positioning to override body margins */
+  position: fixed;
+  top: 0;
+  left: 0;
+
   display: block;
   height: 100vh;
   width: 100vw;
@@ -37,10 +45,10 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 /* --- ZONE 1: THE STAGE (Renderer) --- */
 .stage-area {
   position: relative;
-  flex: 1; /* Takes up all remaining space */
+  flex: 1;
   width: 100%;
   overflow: hidden;
-  background: black; /* Letterboxing color */
+  background: black;
 
   display: flex;
   justify-content: center;
@@ -50,7 +58,7 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 .video-bg {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Keeps aspect ratio */
+  object-fit: contain;
   z-index: 0;
 }
 
@@ -66,9 +74,8 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 }
 
-/* Reuse existing overlay logic */
 .overlay-container {
-  position: absolute; /* Changed to absolute to fit inside stage */
+  position: absolute;
   top: 0;
   left: 0;
   height: 100%;
@@ -77,7 +84,7 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   justify-content: center;
   align-items: center;
   z-index: 1;
-  pointer-events: none; /* Allows clicking through to video if needed, though controls are below now */
+  pointer-events: none;
 }
 
 /* =========================================
@@ -96,10 +103,13 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   place-items: center;
 
   overflow: hidden;
+
+  /* Your Design Padding */
   padding: 1.5rem 1rem 1rem 1rem;
+
   transition: width 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
   max-width: 95vw;
-  pointer-events: auto; /* Re-enable clicks on the card itself if needed */
+  pointer-events: auto;
 
   .lyrics-text {
     grid-area: 1 / 1;
@@ -110,7 +120,10 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     line-height: 1.4;
     color: $color-text;
     letter-spacing: -0.02em;
-    text-shadow: 0 3px 3px rgba(255, 255, 255, 0.6), 0 6px 18px rgba(0, 0, 0, 0.3);
+
+    /* Updated shadows for the red text contrast */
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.9), 0 6px 18px rgba(0, 0, 0, 0.3);
+
     width: 100%;
     text-align: center;
     white-space: nowrap;
@@ -122,7 +135,7 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
    4. ZONE 2: THE CONSOLE (Control Deck)
    ========================================= */
 .control-deck {
-  height: 120px; /* Fixed height for controls */
+  height: 120px;
   background: $color-panel;
   border-top: 1px solid #333;
   padding: 0 2rem;
@@ -134,7 +147,7 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   z-index: 10;
 }
 
-/* Playback Group (Left) */
+/* Playback Group */
 .playback-group {
   display: flex;
   align-items: center;
@@ -187,7 +200,7 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 }
 
-/* Assets Group (Right) */
+/* Assets Group */
 .assets-group {
   display: flex;
   gap: 1.5rem;
